@@ -1,0 +1,86 @@
+# Hardened Debian Media Profile for ImageHarden
+
+[meta]
+name        = "hardened-debian-media"
+version     = "1.0.0"
+description = "Strict media decoding profile for Debian-based Xen dom0/domU"
+environment = "production"
+
+[kernel_expectations]
+seccomp      = true      # CONFIG_SECCOMP=y, CONFIG_SECCOMP_FILTER=y
+namespaces   = ["pid","net","mnt"]  # CONFIG_NAMESPACES + PID_NS/NET_NS/MNT_NS
+landlock     = true      # CONFIG_SECURITY_LANDLOCK=y
+xen_support  = "auto"    # runtime detect /proc/xen
+cfi_cet      = true      # CONFIG_X86_KERNEL_IBT=y, CET enabled CPUs
+iommu        = "strict"  # IOMMU on, passthrough off
+
+[limits.image]
+max_width        = 8192
+max_height       = 8192
+max_rowbytes     = 4294967295          # SIZE_MAX/4
+max_chunk_bytes  = 262144              # 256 KiB per PNG chunk
+
+[limits.audio]
+max_file_bytes   = 104857600           # 100 MiB
+max_duration_sec = 600                 # 10 minutes
+max_sample_rate  = 192000
+max_channels     = 8
+
+[limits.video]
+max_file_bytes   = 524288000           # 500 MiB
+max_duration_sec = 3600                # 1 hour
+max_width        = 3840                # 4K
+max_height       = 2160
+max_framerate    = 120
+max_tracks       = 8
+max_bitrate      = 50000000            # 50 Mbps
+
+[sandbox]
+# Global defaults
+enable_seccomp   = true
+enable_namespaces= true
+enable_landlock  = true
+enable_rlimits   = true
+wasm_runtime     = "wasmtime"
+ffmpeg_wasm_path = "/opt/imageharden/wasm/ffmpeg.wasm"
+
+[sandbox.dom0]
+# More paranoid in dom0
+seccomp_profile  = "xen-strict"
+landlock_policy  = "read-only-input"
+cpu_time_ms      = 30000
+max_rss_bytes    = 536870912           # 512 MiB
+
+[sandbox.domU]
+# Slightly more relaxed in guests
+seccomp_profile  = "default"
+landlock_policy  = "input-and-cache"
+cpu_time_ms      = 60000
+max_rss_bytes    = 1073741824          # 1 GiB
+
+[xen]
+# Behaviour when Xen is detected (as in the security architecture/video guide)
+enforce_1080p_in_xen = true
+max_width_xen        = 1920
+max_height_xen       = 1080
+extra_block_syscalls = ["process_vm_readv","process_vm_writev"]
+
+[logging]
+level        = "info"
+log_dir      = "/var/log/imageharden"
+log_suspicious = true
+log_hash_alg = "blake3"
+
+[fuzzing]
+enable_in_ci = true
+targets = [
+  "fuzz_png",
+  "fuzz_jpeg",
+  "fuzz_svg",
+  "fuzz_mp3",
+  "fuzz_vorbis",
+  "fuzz_flac",
+  "fuzz_video_mp4",
+  "fuzz_video_mkv",
+  "fuzz_video_avi"
+]

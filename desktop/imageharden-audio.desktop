@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=ImageHarden (Audio)
+Comment=Open audio with ImageHarden RCE-resistant media stack
+Exec=/usr/local/bin/image_harden_cli %U
+Terminal=false
+Type=Application
+Icon=audio-x-generic
+Categories=AudioVideo;Audio;
+MimeType=audio/mpeg;audio/ogg;audio/vorbis;audio/x-flac;audio/opus;

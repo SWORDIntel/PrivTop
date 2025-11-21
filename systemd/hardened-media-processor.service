@@ -1,0 +1,26 @@
+[Unit]
+Description=Hardened Media Processor Service
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/run_image_harden.sh
+User=media-processor
+Group=media-processor
+
+# Hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectKernelModules=yes
+RestrictNamespaces=yes
+SystemCallFilter=@seccomp-profile.json
+CapabilityBoundingSet=
+PrivateTmp=yes
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictRealtime=yes
+MemoryDenyWriteExecute=yes
+
+[Install]
+WantedBy=multi-user.target

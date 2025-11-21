@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=ImageHarden (Image)
+Comment=Open image with ImageHarden RCE-resistant media stack
+Exec=/usr/local/bin/image_harden_cli %U
+Terminal=false
+Type=Application
+Icon=image-x-generic
+Categories=Graphics;
+MimeType=image/png;image/jpeg;image/gif;image/bmp;image/svg+xml;

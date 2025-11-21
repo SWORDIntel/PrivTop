@@ -1,0 +1,6 @@
+[Unit]
+Description=Ping Target IP
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/ping_target.sh

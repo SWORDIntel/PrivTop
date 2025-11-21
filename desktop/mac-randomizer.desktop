@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Randomize MAC Addresses
+Comment=Randomize the MAC addresses of all network interfaces
+Exec=pkexec /usr/local/bin/randomize_mac.sh
+Terminal=true
+Type=Application
+Icon=network-vpn
+Categories=System;
